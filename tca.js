@@ -2,7 +2,7 @@ const prompt = require('prompt-sync')()
 class Jogador {
     perdeu() {
         if (this.personagem2) {
-            return this.personagem1.vida + this.personagem2.vida < 0
+            return this.personagem2.vida + this.personagem2.vida < 0
         }
         return this.personagem1.vida < 0
     }
@@ -12,8 +12,8 @@ class Jogador {
     }
 }
 class Personagem {
-    sofredano(dano){
-        this.vida-=dano
+    sofredano(dano) {
+        this.vida -= dano
     }
     listadefesas() {
         for (let i = 0; i < this.defesas.length; i++) {
@@ -26,28 +26,31 @@ class Personagem {
         }
     }
     ataque(defesa, ataque) {
-        if(defesa==null){
+        if (defesa == null) {
             console.log("não foi possivel fazer o ataque pois a defesa não foi encontrada")
-            return 0 
+            return 0
         }
-        if (ataque>this.ataques.length-1) {
+        if (ataque > this.ataques.length - 1) {
             console.log("ataque não encontrado")
             return 0
         }
-        
+
         if (this.ataques[ataque].tipo == "soco") {
-            return this.ataques[ataque].dano - defesa.soco
+            var dano = this.ataques[ataque].dano - defesa.soco
+            return dano >0?dano:0;
         }
         if (this.ataques[ataque].tipo == "chute") {
-            return this.ataques[ataque].dano - defesa.chute
+            var dano = this.ataques[ataque].dano - defesa.chute
+            return dano >0?dano:0;
         }
         if (this.ataques[ataque].tipo == "especial") {
-            return this.ataques[ataque].dano - defesa.especial
+            var dano = this.ataques[ataque].dano - defesa.especial
+            return dano >0?dano:0;
         }
 
     }
-    defesa(defesa){
-        if (defesa>this.defesas.length-1) {
+    defesa(defesa) {
+        if (defesa > this.defesas.length - 1) {
             console.log("defesa não encontrado")
             return null
         }
@@ -79,26 +82,26 @@ Goku = new Personagem(
     "Goku",
     [new Ataque("punho do dragão", 5, "soco"), new Ataque("chute voador", 10, "chute"), new Ataque("kamehameha", 15, "especial")],
     [new Defesa("Zanzoken", 4, 6, 2), new Defesa("Barreira de ki", 2, 4, 6)],
-    50
+    10
 
 )
 Gohan = new Personagem(
     "Gohan",
     [new Ataque("Gekiretsu punch", 5, "soco"), new Ataque("chute metralhadora", 15, "chute"), new Ataque("Masenko", 10, "especial")],
     [new Defesa("Masenko", 4, 6, 2), new Defesa("rajada de ki", 4, 2, 6)],
-    50
+    10
 )
 Moro = new Personagem(
     "Moro",
     [new Ataque("soco respiratorio", 10, "soco"), new Ataque("chuva de meteóros", 15, "chute"), new Ataque("absorção de energia", 5, "especial")],
     [new Defesa("barreira mágica", 4, 6, 2), new Defesa("absorção de energia", 2, 4, 6)],
-    50
+    10
 )
 Freeza = new Personagem(
     "Freeza",
     [new Ataque("Kousoku Renda", 5, "soco"), new Ataque("golpe mortal", 15, "chute"), new Ataque("raio da morte", 10, "especial")],
     [new Defesa("barreira de ki", 6, 2, 4), new Defesa("movimento ultra rapido", 2, 4, 6)],
-    50
+    10
 )
 
 personagens = [Goku, Gohan, Moro, Freeza]
@@ -138,8 +141,9 @@ player2 = new Jogador(personagens[personagem3], null)
 if (personagem4) {
     player2 = new Jogador(personagens[personagem3], personagens[personagem4])
 }
-while (!player1.perdeu() && !player2.perdeu()) {
-    console.log("player1 escolha um ataque")
+while (!player1.perdeu() && !player2.perdeu() && !empatou(player1,player2)) {
+    if(player1.personagem1.vida>0 && player2.personagem1.vida>0){
+        console.log("player1 escolha um ataque")
     player1.personagem1.listaataques()
     ataque1 = parseInt(prompt(""))
     console.log("player2 escolha uma defesa")
@@ -161,15 +165,59 @@ while (!player1.perdeu() && !player2.perdeu()) {
     console.log("o ataque do player 2, personagem 1 gerou : " + dano + " de dano ")
     console.log("player 1, personagem 1 vida restante:" + player1.personagem1.vida)
     console.log("vida ao final do round")
-    console.log("player 1 personagem 1: "+ player1.personagem1.vida)
-    console.log("player 2 personagem 1: "+ player2.personagem1.vida)
-} 
+    console.log("player 1 personagem 1: " + player1.personagem1.vida)
+    console.log("player 2 personagem 1: " + player2.personagem1.vida)
 
-if(player1.perdeu()){
+    }    
+   
+
+    
+if (player1.personagem2 != null && player1.personagem2.vida>0 && player2.personagem2.vida>0) {
+        console.log("player1 escolha um ataque")
+        player1.personagem2.listaataques()
+        ataque1 = parseInt(prompt(""))
+        console.log("player2 escolha uma defesa")
+        player2.personagem2.listadefesas()
+        defesa1 = parseInt(prompt(""))
+        dano = player1.personagem2.ataque(player2.personagem2.defesa(defesa1), ataque1)
+        player2.personagem2.sofredano(dano)
+        console.log("o ataque do player 1, personagem 2 gerou : " + dano + " de dano ")
+        console.log("player 2, personagem 2 vida restante:" + player2.personagem2.vida)
+
+        console.log("player2 escolha um ataque")
+        player2.personagem2.listaataques()
+        ataque1 = parseInt(prompt(""))
+        console.log("player1 escolha uma defesa")
+        player1.personagem2.listadefesas()
+        defesa1 = parseInt(prompt(""))
+        dano = player2.personagem2.ataque(player1.personagem2.defesa(defesa1), ataque1)
+        player1.personagem2.sofredano(dano)
+        console.log("o ataque do player 2, personagem 2 gerou : " + dano + " de dano ")
+        console.log("player 1, personagem 2 vida restante:" + player1.personagem2.vida)
+        console.log("vida ao final do round")
+        console.log("player 1 personagem 1: " + player1.personagem1.vida)
+        console.log("player 2 personagem 1: " + player2.personagem1.vida)
+        console.log("player 1 personagem 2: " + player1.personagem2.vida)
+        console.log("player 2 personagem 2: " + player2.personagem2.vida)
+    }
+}
+
+if(player1.perdeu() && player2.perdeu()){
+    console.log("empate")
+    return 
+}
+
+if (player1.perdeu()) {
     console.log("player 2 é o vencedor")
 }
-else{
+else {
     console.log("playeyr 1 é o vencedor")
 }
+
+function empatou(player1,player2){
+    return (player1.personagem1.vida<0 && player2.personagem2.vida<0) || (player2.personagem1.vida<0 && player1.personagem2.vida<0) || (player1.personagem1.vida<0 && player2.personagem2.vida<0 && player2.personagem1.vida<0 && player1.personagem2.vida<0)
+
+}
+
 
 
