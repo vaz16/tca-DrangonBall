@@ -49,5 +49,6 @@ vida:50
 ataque: Kousoku Renda - dano 5 , golpe mortal 15 - dano  e especial raio da morte  - dano 10
 defesa: barrera de ki(soco defesa 6 , chute defesa 2 e especial 4) e movimento ultra rapido(soco defesa 2 , chute defesa 4 e especial 6)
 
-
+para executar
+node ./tca.js
 
