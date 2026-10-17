@@ -103,10 +103,22 @@ Freeza = new Personagem(
     [new Defesa("barreira de ki", 6, 2, 4), new Defesa("movimento ultra rapido", 2, 4, 6)],
     50
 )
+Vegeta = new Personagem(
+    "Vegeta",
+    [new Ataque("Ki Blast Rush", 10, "soco"), new Ataque("Super Dash Kick", 5, "chute"), new Ataque("Final Flash", 15, "especial")],
+    [new Defesa("escudo de ki", 6, 4, 2), new Defesa("Anulação de Poder", 2, 4, 6)],
+    50
+)
+Trunks = new Personagem(
+    "Trunks",
+    [new Ataque("Shining Sword Attack", 5, "soco"), new Ataque("High Slash", 10, "chute"), new Ataque("Canhão Super Buster", 15, "especial")],
+    [new Defesa("Defesa com a Espada", 2, 6, 4), new Defesa("Superonda Explosiva", 4, 2, 6)],
+    50
+)
 
-personagens = [Goku, Gohan, Moro, Freeza]
+personagens = [Goku, Gohan, Moro, Freeza, Vegeta, Trunks]
 console.log("escolha o modo de batalha")
-console.log("1-1v1 ou 2-2v2")
+console.log("1-1v1,2-2v2 ou 3-player contra maquina")
 mododebatalha = parseInt(prompt(""))
 console.log("player 1 - escolha o Personagem")
 
@@ -120,7 +132,12 @@ if (mododebatalha == 2) {
     console.log("player1 - escolha mais um personagem")
     personagem2 = parseInt(prompt(""))
 }
-console.log("player 2 - escolha o Personagem")
+
+if (mododebatalha == 3) {
+    console.log("player1 - escolha o personagem do bot")
+} else {
+    console.log("player 2 - escolha o Personagem")
+}
 
 for (let i = 0; i < personagens.length; i++) {
     console.log(personagens[i].nome)
@@ -137,33 +154,68 @@ if (personagem2 || personagem2 == 0) {
     player1 = new Jogador(personagens[personagem1], personagens[personagem2])
 
 }
-console.log(personagens)
-console.log(personagem4)
+
 player2 = new Jogador(personagens[personagem3], null)
 if (personagem4 || personagem4 == 0) {
     player2 = new Jogador(personagens[personagem3], personagens[personagem4])
 }
-console.log(player2)
 while (!player1.perdeu() && !player2.perdeu()) {
     if (player1.personagem1.vida > 0 && player2.personagem1.vida > 0) {
         console.log("player1 escolha um ataque")
         player1.personagem1.listaataques()
-        console.log("player2 escolha uma defesa")
-        player2.personagem1.listadefesas()
+        if (mododebatalha == 3) {
+            defesa1 = Math.round(Math.random())
+        }
+        else {
+            console.log("player2 escolha uma defesa")
+            player2.personagem1.listadefesas()
+        }
+
         ataque1 = parseInt(prompt(""))
-        defesa1 = parseInt(prompt(""))
+        while (ataque1 != 1 && ataque1 != 2 && ataque1 != 0) {
+            console.log("player1 escolha um ataque")
+            player1.personagem1.listaataques()
+            ataque1 = parseInt(prompt(""))
+        }
+        if (mododebatalha != 3) {
+            defesa1 = parseInt(prompt(""))
+        }
+        console.log(ataque1)
+        console.log(defesa1)
+        while (defesa1 != 0 && defesa1 != 1) {
+            console.log("player2 escolha uma defesa")
+            player2.personagem1.listadefesas()
+            defesa1 = parseInt(prompt(""))
+        }
         dano = player1.personagem1.ataque(player2.personagem1.defesa(defesa1), ataque1)
         player2.personagem1.sofredano(dano)
         console.log("o ataque do player 1, personagem 1 gerou : " + dano + " de dano ")
         console.log("player 2, personagem 1 vida restante:" + player2.personagem1.vida)
 
         if (player2.personagem1.vida > 0) {
-            console.log("player2 escolha um ataque")
-            player2.personagem1.listaataques()
+            if (mododebatalha == 3) {
+                ataque1 = Math.floor(Math.random() * 3)
+            }
+            else {
+                console.log("player2 escolha um ataque")
+                player2.personagem1.listaataques()
+            }
             console.log("player1 escolha uma defesa")
             player1.personagem1.listadefesas()
-            ataque1 = parseInt(prompt(""))
+            if (mododebatalha != 3) {
+                ataque1 = parseInt(prompt(""))
+            }
+            while (ataque1 != 1 && ataque1 != 2 && ataque1 != 0) {
+                console.log("player2 escolha um ataque")
+                player2.personagem1.listaataques()
+                ataque1 = parseInt(prompt(""))
+            }
             defesa1 = parseInt(prompt(""))
+            while (defesa1 != 0 && defesa1 != 1) {
+                console.log("player1 escolha uma defesa")
+                player1.personagem1.listadefesas()
+                defesa1 = parseInt(prompt(""))
+            }
             dano = player2.personagem1.ataque(player1.personagem1.defesa(defesa1), ataque1)
             player1.personagem1.sofredano(dano)
             console.log("o ataque do player 2, personagem 1 gerou : " + dano + " de dano ")
@@ -184,7 +236,17 @@ while (!player1.perdeu() && !player2.perdeu()) {
         console.log("player2 escolha uma defesa")
         player2.personagem2.listadefesas()
         ataque1 = parseInt(prompt(""))
+        while (ataque1 != 1 && ataque1 != 2 && ataque1 != 0) {
+            console.log("player1 escolha um ataque")
+            player1.personagem2.listaataques()
+            ataque1 = parseInt(prompt(""))
+        }
         defesa1 = parseInt(prompt(""))
+        while (defesa1 != 0 && defesa1 != 1) {
+            console.log("player2 escolha uma defesa")
+            player2.personagem2.listadefesas()
+            defesa1 = parseInt(prompt(""))
+        }
         dano = player1.personagem2.ataque(player2.personagem2.defesa(defesa1), ataque1)
         player2.personagem2.sofredano(dano)
         console.log("o ataque do player 1, personagem 2 gerou : " + dano + " de dano ")
@@ -196,7 +258,17 @@ while (!player1.perdeu() && !player2.perdeu()) {
             console.log("player1 escolha uma defesa")
             player1.personagem2.listadefesas()
             ataque1 = parseInt(prompt(""))
+            while (ataque1 != 1 && ataque1 != 2 && ataque1 != 0) {
+                console.log("player2 escolha um ataque")
+                player2.personagem2.listaataques()
+                ataque1 = parseInt(prompt(""))
+            }
             defesa1 = parseInt(prompt(""))
+            while (defesa1 != 0 && defesa1 != 1) {
+                console.log("player1 escolha uma defesa")
+                player1.personagem2.listadefesas()
+                defesa1 = parseInt(prompt(""))
+            }
             dano = player2.personagem2.ataque(player1.personagem2.defesa(defesa1), ataque1)
             player1.personagem2.sofredano(dano)
             console.log("o ataque do player 2, personagem 2 gerou : " + dano + " de dano ")

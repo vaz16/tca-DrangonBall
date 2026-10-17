@@ -52,3 +52,15 @@ defesa: barrera de ki(soco defesa 6 , chute defesa 2 e especial 4) e movimento u
 para executar
 node ./tca.js
 
+ideias novas 
+
+Perguntar de novo o ataque ou a defesa quando erra um digito
+
+Declarar empate quando um player ganha a primeira luta e outro ganha a segunda
+ 
+ ataques e defesas ficarão em cool down por um turno 
+
+personagens como goku, Gohan e Freeza vão ter a habilidade de transformação por um turno  
+
+teremos mais dois novos personagens como 
+Vegeta e Trunks 
