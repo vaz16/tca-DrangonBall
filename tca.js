@@ -25,7 +25,7 @@ class Personagem {
             console.log(this.ataques[i])
         }
     }
-    ataque(defesa, ataque) {
+    ataque(defesa, ataque, multiplicadordedefesa) {
         if (defesa == null) {
             console.log("não foi possivel fazer o ataque pois a defesa não foi encontrada")
             return 0
@@ -34,20 +34,27 @@ class Personagem {
             console.log("ataque não encontrado")
             return 0
         }
-
+        var poderdefesa = 0
+        var poderataque = this.ataques[ataque].dano
+        var dano = 0
         if (this.ataques[ataque].tipo == "soco") {
-            var dano = this.ataques[ataque].dano - defesa.soco
-            return dano > 0 ? dano : 0;
+            poderdefesa = defesa.soco
         }
         if (this.ataques[ataque].tipo == "chute") {
-            var dano = this.ataques[ataque].dano - defesa.chute
-            return dano > 0 ? dano : 0;
+            poderdefesa = defesa.chute
         }
         if (this.ataques[ataque].tipo == "especial") {
-            var dano = this.ataques[ataque].dano - defesa.especial
-            return dano > 0 ? dano : 0;
+            poderdefesa = defesa.especial
         }
+        if (this.ativartransformacao == true) {
+            poderataque = poderataque * this.transformacao.multiplicador
+        }
+        if(multiplicadordedefesa){
+            poderdefesa = poderdefesa*multiplicadordedefesa
 
+        }
+        dano = poderataque - poderdefesa
+        return dano > 0 ? dano : 0;
     }
     defesa(defesa) {
         if (defesa > this.defesas.length - 1) {
@@ -56,11 +63,22 @@ class Personagem {
         }
         return this.defesas[defesa]
     }
-    constructor(nome, ataques, defesas, vida) {
+    multiplicador(){
+        if(this.ativartransformacao){
+            return this.transformacao.multiplicador
+        }
+        return 1
+    }
+    constructor(nome, ataques, defesas, vida, transformacao) {
         this.nome = nome
         this.ataques = ataques
         this.defesas = defesas
         this.vida = vida
+        this.transformacao = transformacao
+
+    }
+    transformar() {
+        this.ativartransformacao = true
     }
 }
 class Ataque {
@@ -78,42 +96,54 @@ class Defesa {
         this.especial = especial
     }
 }
+class Transformacao {
+    constructor(nome, multiplicador) {
+        this.nome = nome
+        this.multiplicador = multiplicador
+    }
+}
 Goku = new Personagem(
     "Goku",
     [new Ataque("punho do dragão", 5, "soco"), new Ataque("chute voador", 10, "chute"), new Ataque("kamehameha", 15, "especial")],
     [new Defesa("Zanzoken", 4, 6, 2), new Defesa("Barreira de ki", 2, 4, 6)],
-    50
+    150,
+    new Transformacao("ssj", 5)
 
 )
 Gohan = new Personagem(
     "Gohan",
     [new Ataque("Gekiretsu punch", 5, "soco"), new Ataque("chute metralhadora", 15, "chute"), new Ataque("Masenko", 10, "especial")],
     [new Defesa("Masenko", 4, 6, 2), new Defesa("rajada de ki", 4, 2, 6)],
-    50
+    150,
+    new Transformacao("ssj", 5)
 )
 Moro = new Personagem(
     "Moro",
     [new Ataque("soco respiratorio", 10, "soco"), new Ataque("chuva de meteóros", 15, "chute"), new Ataque("absorção de energia", 5, "especial")],
     [new Defesa("barreira mágica", 4, 6, 2), new Defesa("absorção de energia", 2, 4, 6)],
-    50
+    150,
+    new Transformacao("forma final", 5)
 )
 Freeza = new Personagem(
     "Freeza",
     [new Ataque("Kousoku Renda", 5, "soco"), new Ataque("golpe mortal", 15, "chute"), new Ataque("raio da morte", 10, "especial")],
     [new Defesa("barreira de ki", 6, 2, 4), new Defesa("movimento ultra rapido", 2, 4, 6)],
-    50
+    150,
+    new Transformacao("dourado", 5)
 )
 Vegeta = new Personagem(
     "Vegeta",
     [new Ataque("Ki Blast Rush", 10, "soco"), new Ataque("Super Dash Kick", 5, "chute"), new Ataque("Final Flash", 15, "especial")],
     [new Defesa("escudo de ki", 6, 4, 2), new Defesa("Anulação de Poder", 2, 4, 6)],
-    50
+    150,
+    new Transformacao("ssj", 5)
 )
 Trunks = new Personagem(
     "Trunks",
     [new Ataque("Shining Sword Attack", 5, "soco"), new Ataque("High Slash", 10, "chute"), new Ataque("Canhão Super Buster", 15, "especial")],
     [new Defesa("Defesa com a Espada", 2, 6, 4), new Defesa("Superonda Explosiva", 4, 2, 6)],
-    50
+    150,
+    new Transformacao("ssj", 5)
 )
 
 personagens = [Goku, Gohan, Moro, Freeza, Vegeta, Trunks]
@@ -159,8 +189,15 @@ player2 = new Jogador(personagens[personagem3], null)
 if (personagem4 || personagem4 == 0) {
     player2 = new Jogador(personagens[personagem3], personagens[personagem4])
 }
+round = 0
 while (!player1.perdeu() && !player2.perdeu()) {
+    round++
     if (player1.personagem1.vida > 0 && player2.personagem1.vida > 0) {
+        if (round % 2 == 0) {
+            console.log("transformação está ativa")
+            player1.personagem1.transformar()
+            player2.personagem1.transformar()
+        }
         console.log("player1 escolha um ataque")
         player1.personagem1.listaataques()
         if (mododebatalha == 3) {
@@ -187,7 +224,7 @@ while (!player1.perdeu() && !player2.perdeu()) {
             player2.personagem1.listadefesas()
             defesa1 = parseInt(prompt(""))
         }
-        dano = player1.personagem1.ataque(player2.personagem1.defesa(defesa1), ataque1)
+        dano = player1.personagem1.ataque(player2.personagem1.defesa(defesa1), ataque1, player2.personagem1.multiplicador())
         player2.personagem1.sofredano(dano)
         console.log("o ataque do player 1, personagem 1 gerou : " + dano + " de dano ")
         console.log("player 2, personagem 1 vida restante:" + player2.personagem1.vida)
@@ -216,7 +253,7 @@ while (!player1.perdeu() && !player2.perdeu()) {
                 player1.personagem1.listadefesas()
                 defesa1 = parseInt(prompt(""))
             }
-            dano = player2.personagem1.ataque(player1.personagem1.defesa(defesa1), ataque1)
+            dano = player2.personagem1.ataque(player1.personagem1.defesa(defesa1), ataque1,player1.personagem1.multiplicador())
             player1.personagem1.sofredano(dano)
             console.log("o ataque do player 2, personagem 1 gerou : " + dano + " de dano ")
             console.log("player 1, personagem 1 vida restante:" + player1.personagem1.vida)
@@ -231,6 +268,11 @@ while (!player1.perdeu() && !player2.perdeu()) {
 
 
     if (player1.personagem2 != null && player1.personagem2.vida > 0 && player2.personagem2.vida > 0) {
+        if (round % 2 == 0) {
+            console.log("transformação está ativa")
+            player1.personagem2.transformar()
+            player2.personagem2.transformar()
+        }
         console.log("player1 escolha um ataque")
         player1.personagem2.listaataques()
         console.log("player2 escolha uma defesa")
@@ -247,7 +289,7 @@ while (!player1.perdeu() && !player2.perdeu()) {
             player2.personagem2.listadefesas()
             defesa1 = parseInt(prompt(""))
         }
-        dano = player1.personagem2.ataque(player2.personagem2.defesa(defesa1), ataque1)
+        dano = player1.personagem2.ataque(player2.personagem2.defesa(defesa1), ataque1,player2.personagem2.multiplicador())
         player2.personagem2.sofredano(dano)
         console.log("o ataque do player 1, personagem 2 gerou : " + dano + " de dano ")
         console.log("player 2, personagem 2 vida restante:" + player2.personagem2.vida)
@@ -269,7 +311,7 @@ while (!player1.perdeu() && !player2.perdeu()) {
                 player1.personagem2.listadefesas()
                 defesa1 = parseInt(prompt(""))
             }
-            dano = player2.personagem2.ataque(player1.personagem2.defesa(defesa1), ataque1)
+            dano = player2.personagem2.ataque(player1.personagem2.defesa(defesa1), ataque1,player1.personagem2.multiplicador())
             player1.personagem2.sofredano(dano)
             console.log("o ataque do player 2, personagem 2 gerou : " + dano + " de dano ")
             console.log("player 1, personagem 2 vida restante:" + player1.personagem2.vida)
