@@ -12,17 +12,29 @@ class Jogador {
     }
 }
 class Personagem {
+
     sofredano(dano) {
         this.vida -= dano
     }
     listadefesas() {
         for (let i = 0; i < this.defesas.length; i++) {
-            console.log(this.defesas[i])
+            if (this.cooldowndefesas == i) {
+                console.log(this.defesas[i], " em cool down")
+            }
+            else {
+                console.log(this.defesas[i])
+            }
+
         }
     }
     listaataques() {
         for (let i = 0; i < this.ataques.length; i++) {
-            console.log(this.ataques[i])
+            if (this.cooldown == i) {
+                console.log(this.ataques[i], " em cool down")
+            }
+            else {
+                console.log(this.ataques[i])
+            }
         }
     }
     ataque(defesa, ataque, multiplicadordedefesa) {
@@ -32,6 +44,10 @@ class Personagem {
         }
         if (ataque > this.ataques.length - 1) {
             console.log("ataque não encontrado")
+            return 0
+        }
+        if (ataque == this.cooldown) {
+            console.log("ataque em cool down")
             return 0
         }
         var poderdefesa = 0
@@ -49,22 +65,35 @@ class Personagem {
         if (this.ativartransformacao == true) {
             poderataque = poderataque * this.transformacao.multiplicador
         }
-        if(multiplicadordedefesa){
-            poderdefesa = poderdefesa*multiplicadordedefesa
+        if (multiplicadordedefesa) {
+            poderdefesa = poderdefesa * multiplicadordedefesa
 
         }
         dano = poderataque - poderdefesa
+        this.cooldown = ataque
         return dano > 0 ? dano : 0;
+    }
+    ataqueinvalido(ataque) {
+        return (ataque != 1 && ataque != 2 && ataque != 0) || ataque == this.cooldown
+
     }
     defesa(defesa) {
         if (defesa > this.defesas.length - 1) {
             console.log("defesa não encontrado")
             return null
         }
+        if (defesa == this.cooldowndefesas) {
+            console.log("defesa em cool down")
+            return null
+        }
+        this.cooldowndefesas = defesa
         return this.defesas[defesa]
     }
-    multiplicador(){
-        if(this.ativartransformacao){
+    defesainvalida(defesa) {
+        return (defesa1 != 0 && defesa1 != 1) || defesa == this.cooldowndefesas
+    }
+    multiplicador() {
+        if (this.ativartransformacao) {
             return this.transformacao.multiplicador
         }
         return 1
@@ -202,6 +231,9 @@ while (!player1.perdeu() && !player2.perdeu()) {
         player1.personagem1.listaataques()
         if (mododebatalha == 3) {
             defesa1 = Math.round(Math.random())
+            while (player2.personagem1.defesainvalida(defesa1)) {
+                defesa1 = Math.round(Math.random())
+            }
         }
         else {
             console.log("player2 escolha uma defesa")
@@ -209,7 +241,7 @@ while (!player1.perdeu() && !player2.perdeu()) {
         }
 
         ataque1 = parseInt(prompt(""))
-        while (ataque1 != 1 && ataque1 != 2 && ataque1 != 0) {
+        while (player1.personagem1.ataqueinvalido(ataque1)) {
             console.log("player1 escolha um ataque")
             player1.personagem1.listaataques()
             ataque1 = parseInt(prompt(""))
@@ -219,7 +251,7 @@ while (!player1.perdeu() && !player2.perdeu()) {
         }
         console.log(ataque1)
         console.log(defesa1)
-        while (defesa1 != 0 && defesa1 != 1) {
+        while (player2.personagem1.defesainvalida(defesa1)) {
             console.log("player2 escolha uma defesa")
             player2.personagem1.listadefesas()
             defesa1 = parseInt(prompt(""))
@@ -232,6 +264,9 @@ while (!player1.perdeu() && !player2.perdeu()) {
         if (player2.personagem1.vida > 0) {
             if (mododebatalha == 3) {
                 ataque1 = Math.floor(Math.random() * 3)
+                while (player2.personagem1.ataqueinvalido(ataque1)) {
+                    ataque1 = Math.floor(Math.random() * 3)
+                }
             }
             else {
                 console.log("player2 escolha um ataque")
@@ -242,18 +277,18 @@ while (!player1.perdeu() && !player2.perdeu()) {
             if (mododebatalha != 3) {
                 ataque1 = parseInt(prompt(""))
             }
-            while (ataque1 != 1 && ataque1 != 2 && ataque1 != 0) {
+            while (player2.personagem1.ataqueinvalido(ataque1)) {
                 console.log("player2 escolha um ataque")
                 player2.personagem1.listaataques()
                 ataque1 = parseInt(prompt(""))
             }
             defesa1 = parseInt(prompt(""))
-            while (defesa1 != 0 && defesa1 != 1) {
+            while (player1.personagem1.defesainvalida(defesa1)) {
                 console.log("player1 escolha uma defesa")
                 player1.personagem1.listadefesas()
                 defesa1 = parseInt(prompt(""))
             }
-            dano = player2.personagem1.ataque(player1.personagem1.defesa(defesa1), ataque1,player1.personagem1.multiplicador())
+            dano = player2.personagem1.ataque(player1.personagem1.defesa(defesa1), ataque1, player1.personagem1.multiplicador())
             player1.personagem1.sofredano(dano)
             console.log("o ataque do player 2, personagem 1 gerou : " + dano + " de dano ")
             console.log("player 1, personagem 1 vida restante:" + player1.personagem1.vida)
@@ -278,18 +313,18 @@ while (!player1.perdeu() && !player2.perdeu()) {
         console.log("player2 escolha uma defesa")
         player2.personagem2.listadefesas()
         ataque1 = parseInt(prompt(""))
-        while (ataque1 != 1 && ataque1 != 2 && ataque1 != 0) {
+        while (player1.personagem2.ataqueinvalido(ataque1)) {
             console.log("player1 escolha um ataque")
             player1.personagem2.listaataques()
             ataque1 = parseInt(prompt(""))
         }
         defesa1 = parseInt(prompt(""))
-        while (defesa1 != 0 && defesa1 != 1) {
+        while (player2.personagem2.defesainvalida(defesa1)) {
             console.log("player2 escolha uma defesa")
             player2.personagem2.listadefesas()
             defesa1 = parseInt(prompt(""))
         }
-        dano = player1.personagem2.ataque(player2.personagem2.defesa(defesa1), ataque1,player2.personagem2.multiplicador())
+        dano = player1.personagem2.ataque(player2.personagem2.defesa(defesa1), ataque1, player2.personagem2.multiplicador())
         player2.personagem2.sofredano(dano)
         console.log("o ataque do player 1, personagem 2 gerou : " + dano + " de dano ")
         console.log("player 2, personagem 2 vida restante:" + player2.personagem2.vida)
@@ -300,18 +335,18 @@ while (!player1.perdeu() && !player2.perdeu()) {
             console.log("player1 escolha uma defesa")
             player1.personagem2.listadefesas()
             ataque1 = parseInt(prompt(""))
-            while (ataque1 != 1 && ataque1 != 2 && ataque1 != 0) {
+            while (player2.personagem2.ataqueinvalido(ataque1)) {
                 console.log("player2 escolha um ataque")
                 player2.personagem2.listaataques()
                 ataque1 = parseInt(prompt(""))
             }
             defesa1 = parseInt(prompt(""))
-            while (defesa1 != 0 && defesa1 != 1) {
+            while (player1.personagem2.defesainvalida(defesa1)) {
                 console.log("player1 escolha uma defesa")
                 player1.personagem2.listadefesas()
                 defesa1 = parseInt(prompt(""))
             }
-            dano = player2.personagem2.ataque(player1.personagem2.defesa(defesa1), ataque1,player1.personagem2.multiplicador())
+            dano = player2.personagem2.ataque(player1.personagem2.defesa(defesa1), ataque1, player1.personagem2.multiplicador())
             player1.personagem2.sofredano(dano)
             console.log("o ataque do player 2, personagem 2 gerou : " + dano + " de dano ")
             console.log("player 1, personagem 2 vida restante:" + player1.personagem2.vida)
