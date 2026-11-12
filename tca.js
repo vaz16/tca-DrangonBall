@@ -178,7 +178,7 @@ Trunks = new Personagem(
 personagens = [Goku, Gohan, Moro, Freeza, Vegeta, Trunks]
 console.log("escolha o modo de batalha")
 console.log("1-1v1,2-2v2 ou 3-player contra maquina")
-mododebatalha = parseInt(prompt(""))
+let mododebatalha = parseInt(prompt(""))
 console.log("player 1 - escolha o Personagem")
 
 for (let i = 0; i < personagens.length; i++) {
@@ -256,6 +256,9 @@ while (!player1.perdeu() && !player2.perdeu()) {
             player2.personagem1.listadefesas()
             defesa1 = parseInt(prompt(""))
         }
+        if (mododebatalha== 3){
+            console.log("o bot se defendeu com: " + player2.personagem1.defesas[defesa1].nome)
+        }
         dano = player1.personagem1.ataque(player2.personagem1.defesa(defesa1), ataque1, player2.personagem1.multiplicador())
         player2.personagem1.sofredano(dano)
         console.log("o ataque do player 1, personagem 1 gerou : " + dano + " de dano ")
@@ -287,6 +290,9 @@ while (!player1.perdeu() && !player2.perdeu()) {
                 console.log("player1 escolha uma defesa")
                 player1.personagem1.listadefesas()
                 defesa1 = parseInt(prompt(""))
+            }
+            if(mododebatalha == 3){
+                console.log("o bota ataca com: "+ player2.personagem1.ataques[ataque1].nome)
             }
             dano = player2.personagem1.ataque(player1.personagem1.defesa(defesa1), ataque1, player1.personagem1.multiplicador())
             player1.personagem1.sofredano(dano)
