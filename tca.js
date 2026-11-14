@@ -98,16 +98,38 @@ class Personagem {
         }
         return 1
     }
-    constructor(nome, ataques, defesas, vida, transformacao) {
+    constructor(nome, ataques, defesas, vida, transformacao, dificuldade) {
         this.nome = nome
         this.ataques = ataques
         this.defesas = defesas
         this.vida = vida
         this.transformacao = transformacao
+        this.dificuldade = dificuldade
 
     }
     transformar() {
         this.ativartransformacao = true
+    }
+    ataquebot() {
+        if (dificuldade == 1) {
+            let ataque1 = Math.floor(Math.random() * 3)
+            while (player2.personagem1.ataqueinvalido(ataque1)) {
+                ataque1 = Math.floor(Math.random() * 3)
+            }
+            return ataque1
+        }
+        let ataque1 = 0
+        let ataqueforca = 0
+         for (let i = 0; i < this.ataques.length; i++) {
+            if (this.cooldown != i) {
+                if(this.ataques[i].dano > ataqueforca){
+                    ataque1 = i
+                    ataqueforca = this.ataques[i].dano
+                }
+            }
+           
+        }
+        return ataque1
     }
 }
 class Ataque {
@@ -193,6 +215,8 @@ if (mododebatalha == 2) {
 }
 
 if (mododebatalha == 3) {
+    console.log("escolha a dificuldade do bot, 1 facil, 2 dificil")
+    dificuldade = parseInt(prompt(""))
     console.log("player1 - escolha o personagem do bot")
 } else {
     console.log("player 2 - escolha o Personagem")
@@ -256,7 +280,7 @@ while (!player1.perdeu() && !player2.perdeu()) {
             player2.personagem1.listadefesas()
             defesa1 = parseInt(prompt(""))
         }
-        if (mododebatalha== 3){
+        if (mododebatalha == 3) {
             console.log("o bot se defendeu com: " + player2.personagem1.defesas[defesa1].nome)
         }
         dano = player1.personagem1.ataque(player2.personagem1.defesa(defesa1), ataque1, player2.personagem1.multiplicador())
@@ -266,10 +290,8 @@ while (!player1.perdeu() && !player2.perdeu()) {
 
         if (player2.personagem1.vida > 0) {
             if (mododebatalha == 3) {
-                ataque1 = Math.floor(Math.random() * 3)
-                while (player2.personagem1.ataqueinvalido(ataque1)) {
-                    ataque1 = Math.floor(Math.random() * 3)
-                }
+                ataque1 = player2.personagem1.ataquebot()
+               
             }
             else {
                 console.log("player2 escolha um ataque")
@@ -291,8 +313,8 @@ while (!player1.perdeu() && !player2.perdeu()) {
                 player1.personagem1.listadefesas()
                 defesa1 = parseInt(prompt(""))
             }
-            if(mododebatalha == 3){
-                console.log("o bota ataca com: "+ player2.personagem1.ataques[ataque1].nome)
+            if (mododebatalha == 3) {
+                console.log("o bota ataca com: " + player2.personagem1.ataques[ataque1].nome)
             }
             dano = player2.personagem1.ataque(player1.personagem1.defesa(defesa1), ataque1, player1.personagem1.multiplicador())
             player1.personagem1.sofredano(dano)
